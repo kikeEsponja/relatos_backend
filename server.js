@@ -9,23 +9,23 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("Conectado a MongoDB"))
-  .catch(err => console.error("Error de conexión:", err));
+  .then(() => console.log("✅ Conectado a MongoDB"))
+  .catch(err => console.error("❌ Error de conexión:", err));
 
-// Modelo de ejemplo
-const Mensaje = mongoose.model("Mensaje", { texto: String });
-
-// Ruta GET
-app.get("/mensajes", async (req, res) => {
-  const mensajes = await Mensaje.find();
-  res.json(mensajes);
+const Relato = mongoose.model("Relato", {
+  titulo: String,
+  contenido: String,
+  autor: String
 });
 
-// Ruta POST
-app.post("/mensajes", async (req, res) => {
-  const nuevo = new Mensaje({ texto: req.body.texto });
+app.get("/relatos", async (req, res) => {
+  const relatos = await Relato.find();
+  res.json(relatos);
+});
+
+app.post("/relatos", async (req, res) => {
+  const nuevo = new Relato(req.body);
   await nuevo.save();
   res.json({ ok: true });
 });
