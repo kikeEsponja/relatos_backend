@@ -14,13 +14,13 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error("❌ Error de conexión:", err));
 
 const RelatoSchema = new mongoose.Schema({
-  titulo: String,
+  fecha: String,
   autor: String,
   contenido: String,
-  fecha: String
+  titulo: String,
 });
 
-const Relato = mongoose.model("Relato", RelatoSchema);
+const Relato = mongoose.model("Relato", RelatoSchema, "relatos");
 
 app.get("/", (req, res) => {
   res.send("Servidor funcionando correctamente");
