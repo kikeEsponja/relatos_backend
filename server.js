@@ -50,6 +50,7 @@ app.get("/autores", async (req, res) => {
     const autores = await Relato.distinct("autor");
     res.json(autores);
   } catch (error) {
+    console.error("Error en /autores:", error);
     res.status(500).json({ error: "Error al obtener autores" });
   }
 });
@@ -61,6 +62,15 @@ app.get("/relatos/:autor", async (req, res) => {
     res.json(relatos);
   } catch (error) {
     res.status(500).json({ error: "Error al obtener relatos" });
+  }
+});
+
+app.get("/debug", async (req, res) => {
+  try {
+    const count = await Relato.countDocuments();
+    res.json({ conectado: true, cantidad: count });
+  } catch (error) {
+    res.status(500).json({ conectado: false, error: error.message });
   }
 });
 
