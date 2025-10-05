@@ -45,5 +45,24 @@ app.post("/relatos", async (req, res) => {
   }
 });
 
+app.get("/autores", async (req, res) => {
+  try {
+    const autores = await Relato.distinct("autor");
+    res.json(autores);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener autores" });
+  }
+});
+
+// Obtener relatos por autor
+app.get("/relatos/:autor", async (req, res) => {
+  try {
+    const relatos = await Relato.find({ autor: req.params.autor });
+    res.json(relatos);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener relatos" });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor activo en puerto ${PORT}`));
