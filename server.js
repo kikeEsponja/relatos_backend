@@ -20,7 +20,7 @@ const RelatoSchema = new mongoose.Schema({
   titulo: String,
 });
 
-const Relato = mongoose.model("relatos", RelatoSchema);
+const Relato = mongoose.model("relatos_kike", RelatoSchema);
 
 app.get("/", (req, res) => {
   res.send("Servidor funcionando correctamente");
