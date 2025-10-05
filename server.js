@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 dotenv.config();
+console.log("🔍 URI de Mongo:", process.env.MONGO_URI);
 const app = express();
 
 app.use(cors());
