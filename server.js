@@ -93,6 +93,14 @@ app.get("/dibujantes", async (req, res) => {
 		res.status(500).json({ error: "Error al obtener dibujantes" });
 	}
 });
+app.get("/dibujos/:autor", async (req, res) => {
+	try {
+		const dibujos = await Dibujo.find({ autor: req.params.autor });
+		res.json(dibujos);
+	} catch (error) {
+		res.status(500).json({ error: "Error al obtener relatos" });
+	}
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor activo en puerto ${PORT}`));
