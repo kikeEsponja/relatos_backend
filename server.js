@@ -68,12 +68,13 @@ app.get("/relatos/:autor", async (req, res) => {
 	}
 });
 
-app.get("/debug", async (req, res) => {
+app.get("/dibujantes", async (req, res) => {
 	try {
-		const count = await Relato.countDocuments();
-		res.json({ conectado: true, cantidad: count });
+		const dibujantes = await Relato.distinct("autor");
+		res.json(dibujantes);
 	} catch (error) {
-		res.status(500).json({ conectado: false, error: error.message });
+		console.error("Error en /dibujantes:", error);
+		res.status(500).json({ error: "Error al obtener dibujantes" });
 	}
 });
 
