@@ -24,6 +24,7 @@ const RelatoSchema = new mongoose.Schema({
 });
 
 const Relato = mongoose.model("relatos", RelatoSchema);
+const Dibujo = mongoose.model("dibujos", RelatoSchema);
 
 app.get("/", (req, res) => {
 	res.send("Servidor funcionando correctamente");
@@ -70,7 +71,7 @@ app.get("/relatos/:autor", async (req, res) => {
 
 app.get("/dibujantes", async (req, res) => {
 	try {
-		const dibujantes = await Relato.distinct("autor");
+		const dibujantes = await Dibujo.distinct("autor");
 		res.json(dibujantes);
 	} catch (error) {
 		console.error("Error en /dibujantes:", error);
