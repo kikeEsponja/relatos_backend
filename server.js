@@ -38,6 +38,14 @@ app.get("/relatos", async (req, res) => {
 		res.status(500).json({ error: "Error al intentar obtener los relatos" })
 	}
 });
+app.get("/dibujos", async (req, res) => {
+	try{
+		const dibujos = await Dibujo.find().sort({ fecha: -1 });
+		res.json(dibujos);
+	}catch (error) {
+		res.status(500).json({ error: "Error al intentar obtener los dibujos" })
+	}
+});
 
 app.post("/relatos", async (req, res) => {
 	try{
