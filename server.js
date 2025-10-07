@@ -22,9 +22,16 @@ const RelatoSchema = new mongoose.Schema({
 	portada: String,
 	foto_autor: String,
 });
-
+const DibujoSchema = new mongoose.Schema({
+	fecha: String,
+	autor: String,
+	contenido: String,
+	titulo: String,
+	portada: String,
+	foto_autor: String,
+});
 const Relato = mongoose.model("relatos", RelatoSchema);
-const Dibujo = mongoose.model("dibujos", RelatoSchema);
+const Dibujo = mongoose.model("dibujos", DibujoSchema);
 
 app.get("/", (req, res) => {
 	res.send("Servidor funcionando correctamente");
