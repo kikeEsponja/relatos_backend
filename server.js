@@ -70,7 +70,7 @@ function crearRutas(tipo, Modelo){
 		try{
 			const { id } = req.params;
 			await Relato.findByIdAndUpdate(id, { $inc: { visitas: 1 } });
-			//res.json({ ok: true });
+			res.json({ ok: true });
 		}catch(error){
 			console.error("Error al registrar visita:", error);
 			res.status(500).json({ error: "no se pudo registrar la visita" });
