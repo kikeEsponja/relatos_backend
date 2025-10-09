@@ -14,92 +14,75 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Conectado a MongoDB"))
   .catch(err => console.error("❌ Error de conexión:", err));
 
-const RelatoSchema = new mongoose.Schema({
+const BaseSchema = new mongoose.Schema({
 	fecha: String,
 	autor: String,
 	contenido: String,
 	titulo: String,
 	portada: String,
 	foto_autor: String,
+	visitas: { type: Number, default: 0 },
 });
-const DibujoSchema = new mongoose.Schema({
-	fecha: String,
-	autor: String,
-	contenido: String,
-	titulo: String,
-	portada: String,
-	foto_autor: String,
-});
-const Relato = mongoose.model("relatos", RelatoSchema);
-const Dibujo = mongoose.model("dibujos", DibujoSchema);
+
+const Relato = mongoose.model("relatos", BaseSchema);
+const Dibujo = mongoose.model("dibujos", BaseSchema);
+
+function crearRutas(tipo, Modelo){
+	app.get(`/${tipo}`, async (req, res) =>{
+		try{
+			const docs = await Modelo.find().sort({ fecha: -1 });
+			res.json(docs);
+		}catch (error){
+			res.status(500).json({ error: `Error al obtener ${tipo}`});
+		}
+	});
+
+	app.get(`/${tipo === "relatos" ? "autores" : "dibujantes"}`, async (req, res) => {
+		try{
+			const autores = await Modelo.distinct("autor");
+			res.json(autores);
+		}catch(error){
+			console.error(`Error en /${tipo}:`, error);
+			res.status(500).json({ error: `Error al obtener ${tipo}`});
+		}
+	});
+
+	app.get(`/${tipo}/:autor`, async (req, res) => {
+		try{
+			const docs = await Modelo.find({ autor: req.params.autor });
+			res.json(docs);
+		}catch(error){
+			res.status(500).json({ error: `Error al obtener ${tipo} por autor`});
+		}
+	});
+
+	app.post(`/${tipo}`, async (req, res) => {
+		try{
+			const nuevo = new Modelo(req.body);
+			await nuevo.save();
+			res.json({ ok:true });
+		}catch(error){
+			res.status(500).json({ error: `Error al guardar ${tipo}`});
+		}
+	});
+
+	app.post("/visita/:id", async (req, res) => {
+		try{
+			const { id } = req.params;
+			await Relato.findByIdAndUpdate(id, { $inc: { visitas: 1 } });
+			res.json({ ok: true });
+		}catch(error){
+			console.error("Error al registrar visita:", error);
+			res.status(500).json({ error: "no se pudo registrar la visita" });
+		}
+	});
+}
+
+crearRutas("relatos", Relato);
+crearRutas("dibujos", Dibujo);
 
 app.get("/", (req, res) => {
 	res.send("Servidor funcionando correctamente");
-});
-
-app.get("/relatos", async (req, res) => {
-	try{
-		const relatos = await Relato.find().sort({ fecha: -1 });
-		res.json(relatos);
-	}catch (error) {
-		res.status(500).json({ error: "Error al intentar obtener los relatos" })
-	}
-});
-app.get("/dibujos", async (req, res) => {
-	try{
-		const dibujos = await Dibujo.find().sort({ fecha: -1 });
-		res.json(dibujos);
-	}catch (error) {
-		res.status(500).json({ error: "Error al intentar obtener los dibujos" })
-	}
-});
-
-app.post("/relatos", async (req, res) => {
-	try{
-		const nuevo = new Relato(req.body);
-		await nuevo.save();
-		res.json({ ok: true });
-	}catch(error){
-		res.status(500).json({ error: "Error al guardar el relato" });
-	}
-});
-
-app.get("/autores", async (req, res) => {
-	try {
-		const autores = await Relato.distinct("autor");
-		res.json(autores);
-	} catch (error) {
-		console.error("Error en /autores:", error);
-		res.status(500).json({ error: "Error al obtener autores" });
-	}
-});
-
-// Obtener relatos por autor
-app.get("/relatos/:autor", async (req, res) => {
-	try {
-		const relatos = await Relato.find({ autor: req.params.autor });
-		res.json(relatos);
-	} catch (error) {
-		res.status(500).json({ error: "Error al obtener relatos" });
-	}
-});
-
-app.get("/dibujantes", async (req, res) => {
-	try {
-		const dibujantes = await Dibujo.distinct("autor");
-		res.json(dibujantes);
-	} catch (error) {
-		console.error("Error en /dibujantes:", error);
-		res.status(500).json({ error: "Error al obtener dibujantes" });
-	}
-});
-app.get("/dibujos/:autor", async (req, res) => {
-	try {
-		const dibujos = await Dibujo.find({ autor: req.params.autor });
-		res.json(dibujos);
-	} catch (error) {
-		res.status(500).json({ error: "Error al obtener relatos" });
-	}
 });
 
 const PORT = process.env.PORT || 3000;
