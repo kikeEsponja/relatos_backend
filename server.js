@@ -66,6 +66,16 @@ function crearRutas(tipo, Modelo){
 		}
 	});
 
+	app.post('/acceso', (req, res) => {
+		const { pass } = req.body;
+
+		if(pass === process.env.ADMIN_PASS){
+			res.json({ ok: true });
+		}else{
+			res.status(401).json({ ok: false, error: 'contraseña incorrecta' });
+		}
+	});
+
 	app.post("/visita/:id", async (req, res) => {
 		try{
 			const { id } = req.params;
