@@ -95,5 +95,9 @@ app.get("/", (req, res) => {
 	res.send("Servidor funcionando correctamente");
 });
 
+app.get((req, res) => {
+	res.status(404).sendFile(__dirname + '/src/html/404.html');
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor activo en puerto ${PORT}`));
